@@ -1,56 +1,73 @@
-import { products } from "../data/products.js"
+import pool from "../config/db.js";
 
-// GET all
-export const getProducts = (req, res) => {
-  res.json(products)
-}
+// CREATE PRODUCT
+export const createProduct = async (req, res) => {
+  try {
+    const { name, price, stock } = req.body;
 
-// GET one
-export const getProductById = (req, res) => {
-  const product = products.find(p => p.id === req.params.id)
+    const result = await pool.query(
+      "INSERT INTO products (name, price, stock) VALUES ($1, $2, $3) RETURNING *",
+      [name, price, stock]
+    );
 
-  if(!product){
-    res.status(404).json({ message: "Product not found" })
+    res.json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
+};
 
-  res.json(product)
-}
-
-// CREATE
-export const createProduct = (req, res) => {
-  const newProduct = {
-    id: Date.now(),
-    ...req.body
+// GET ALL PRODUCTS
+export const getProducts = async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM products");
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
+};
 
-  products.push(newProduct)
-  res.status(201).json(newProduct)
-}
+// GET SINGLE PRODUCT
+export const getProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
 
-// UPDATE
-export const updateProduct = (req, res) => {
-  const index = products.find(p => p.id === req.params.id)
+    const result = await pool.query(
+      "SELECT * FROM products WHERE id = $1",
+      [id]
+    );
 
-  if(index === -1){
-    return res.status(404).json({ message: "Product not found" })
+    res.json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
+};
 
-  products[index] = {
-    ...products[index],
-    ...req.body
+// UPDATE PRODUCT
+export const updateProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, price, stock } = req.body;
+
+    const result = await pool.query(
+      "UPDATE products SET name=$1, price=$2, stock=$3 WHERE id=$4 RETURNING *",
+      [name, price, stock, id]
+    );
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
+};
 
-  res.json(products[index])
-}
+// DELETE PRODUCT
+export const deleteProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
 
-// DELETE
-export const deleteProduct = (req, res) => {
-  const index = products.find(p => p.id === req.params.id)
+    await pool.query("DELETE FROM products WHERE id=$1", [id]);
 
-  if(index === -1){
-    return res.status(404).json({ message: "Product not found" })
+    res.json({ message: "Deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
-
-  const deleted = products.splice(index, 1)
-  res.json(deleted, { message: "Product deleted" })
-}
+};

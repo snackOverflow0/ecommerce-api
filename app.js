@@ -1,11 +1,14 @@
 import express from "express"
+import dotenv from "dotenv"
 
 import orderRoutes from  "./src/routes/orders.routes.js"
 import productRoutes from  "./src/routes/products.routes.js"
 import userRoutes from  "./src/routes/users.routes.js"
 
+dotenv.config()
+
 const app = express()
-const PORT = 3000
+const PORT = process.env.PORT || 3000
 
 app.use(express.json())
 
