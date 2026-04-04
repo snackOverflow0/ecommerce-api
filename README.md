@@ -1,76 +1,178 @@
-# 🛒 E-commerce API (Express.js)
+# 🛒 E-commerce API (Node.js + Express + PostgreSQL)
 
-A simple E-commerce backend API built using Express.js with a clean MVC structure (Routes + Controllers).
-This project is designed for learning backend fundamentals before integrating a database.
+A simple but scalable **E-commerce Backend API** built with **Node.js, Express, and PostgreSQL (Neon)** following an MVC architecture.
+
+---
 
 ## 🚀 Features
 
-* Products API (CRUD)
-* Users API
-* Orders API
-* Order total calculation
-* MVC structure (Routes + Controllers)
-* In-memory data (no database yet)
+* 🛍️ Product Management (CRUD)
+* ⚡ RESTful API design
+* 🧱 MVC Architecture
+* ☁️ Cloud Database (Neon PostgreSQL)
+* 🔒 Environment Variables with dotenv
+
+---
 
 ## 🛠 Tech Stack
 
-* Node.js
-* Express.js
+* **Backend:** Node.js, Express.js
+* **Database:** PostgreSQL (Neon)
+* **Tools:** Git, REST Client / Postman
+
+---
 
 ## 📁 Project Structure
 
 ```
 src/
-├── app.js
-├── routes/
+├── config/
+│   └── db.js
 ├── controllers/
-├── data/
+│   └── productController.js
+├── routes/
+│   └── productRoutes.js
+├── app.js
+
+.env
+initDb.js
+package.json
 ```
 
-## ▶️ Run Locally
+---
 
-```bash
+## ⚙️ Installation
+
+### 1. Clone the repository
+
+```
+git clone https://github.com/yourusername/ecommerce-api.git
+cd ecommerce-api
+```
+
+---
+
+### 2. Install dependencies
+
+```
 npm install
-npm run dev
 ```
 
-Server runs at:
+---
+
+### 3. Setup environment variables
+
+Create a `.env` file:
+
+```
+DATABASE_URL=your_neon_database_url
+PORT=3000
+```
+
+---
+
+### 4. Run database setup
+
+```
+node initDb.js
+```
+
+---
+
+### 5. Start the server
+
+```
+node src/app.js
+```
+
+Server will run at:
 
 ```
 http://localhost:3000
 ```
 
-## 📌 API Endpoints
+---
 
-### Products
+## 🧪 API Endpoints
 
-* GET /api/products
-* GET /api/products/:id
-* POST /api/products
-* PUT /api/products/:id
-* DELETE /api/products/:id
+### 📦 Products
 
-### Users
+#### Create Product
 
-* GET /api/users
-* POST /api/users
+```
+POST /api/products
+```
 
-### Orders
+#### Get All Products
 
-* GET /api/orders
-* POST /api/orders
+```
+GET /api/products
+```
 
-## 📬 Testing
+#### Get Single Product
 
-Use VS Code REST Client (`test.rest`) to test endpoints.
+```
+GET /api/products/:id
+```
 
-## 🔥 Future Improvements
+#### Update Product
 
-* Add PostgreSQL + Prisma
-* Authentication (JWT)
-* Validation middleware
-* Error handling middleware
+```
+PUT /api/products/:id
+```
+
+#### Delete Product
+
+```
+DELETE /api/products/:id
+```
 
 ---
 
-👨‍💻 Built by Christopher
+## 📌 Sample Request
+
+```
+POST /api/products
+Content-Type: application/json
+
+{
+  "name": "Laptop",
+  "price": 50000,
+  "stock": 10
+}
+```
+
+---
+
+## 🔥 Future Improvements
+
+* 👤 User Authentication (JWT)
+* 🧾 Order System (cart & checkout)
+* 💳 Payment Integration
+* 📊 Admin Dashboard
+* 🔐 Role-based Access Control
+
+---
+
+## 👨‍💻 Author
+
+**Christopher Castelo**
+
+* Aspiring Backend Developer
+* Focused on building scalable APIs
+
+---
+
+## ⭐ Notes
+
+This project is part of my backend development journey, focusing on mastering:
+
+* Express.js
+* Database integration
+* Real-world API architecture
+
+---
+
+## 📜 License
+
+This project is open-source and available for learning purposes.
