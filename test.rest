@@ -1,8 +1,30 @@
+###
 POST http://localhost:3000/api/products
 Content-Type: application/json
 
 {
-  "name": "Shoes",
-  "price": 10000,
-  "stock": 100
+  "name": "Moisturizer",
+  "price": 300,
+  "stock": 230
+}
+
+###
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "email": "castelochristopher@gmail.com",
+  "password": "admin123"
+}
+
+###
+POST http://localhost:3000/api/orders
+Content-Type: application/json
+
+{
+  "user_id": 1,
+  "items": [
+    { "product_id": 1, "quantity": 2 },
+    { "product_id": 2, "quantity": 1 }
+  ]
 }

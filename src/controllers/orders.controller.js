@@ -1,32 +1,54 @@
-import { orders } from "../data/orders.js"
-import { products } from "../data/products.js"
+import pool from "../config/db.js";
 
-// GET orders
-export const getOrders = (req, res) => {
-  res.json(products)
-}
+export const createOrder = async (req, res) => {
+  const client = await pool.connect();
 
-// CREATE order
-export const createOrder = (req, res) => {
-  const { userId, items } = req.body
+  try {
+    const { user_id, items } = req.body;
 
-  let total = 0
+    await client.query("BEGIN");
 
-  for (let item of items){
-    const product = products.find(p => p.id === req.params.id)
+    let total = 0;
 
-    if(!product){
-      return res.status(404).json({ message: "Product not found" })
+    // 1. Calculate total
+    for (let item of items) {
+      const product = await client.query(
+        "SELECT * FROM products WHERE id = $1",
+        [item.product_id]
+      );
+
+      const price = product.rows[0].price;
+      total += price * item.quantity;
     }
 
-    total += product.price * item.quantity
-  }
+    // 2. Create order
+    const orderResult = await client.query(
+      "INSERT INTO orders (user_id, total) VALUES ($1, $2) RETURNING *",
+      [user_id, total]
+    );
 
-  const newOrder = {
-    id: Date.now(),
-    userId,
-    items,
-    total,
-    status: "pending"
+    const orderId = orderResult.rows[0].id;
+
+    // 3. Insert order items
+    for (let item of items) {
+      const product = await client.query(
+        "SELECT * FROM products WHERE id = $1",
+        [item.product_id]
+      );
+
+      await client.query(
+        "INSERT INTO order_items (order_id, product_id, quantity, price) VALUES ($1, $2, $3, $4)",
+        [orderId, item.product_id, item.quantity, product.rows[0].price]
+      );
+    }
+
+    await client.query("COMMIT");
+
+    res.json({ message: "Order created", total });
+  } catch (error) {
+    await client.query("ROLLBACK");
+    res.status(500).json({ error: error.message });
+  } finally {
+    client.release();
   }
-}
+};
